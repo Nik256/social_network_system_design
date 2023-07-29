@@ -1,0 +1,359 @@
+openapi: 3.0.3
+info:
+  title: VK API
+  version: 1.0.11
+servers:
+  - url: https://localhost:8080/api/v1
+tags:
+  - name: user
+  - name: friend
+  - name: post
+  - name: message
+
+paths:
+  /friend/{id}:
+    post:
+      tags:
+        - friend
+      summary: Add friend
+      operationId: addFriend
+      parameters:
+        - name: id
+          in: path
+          description: Friend id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid id
+    delete:
+      tags:
+        - friend
+      summary: Delete friend
+      operationId: deleteFriend
+      parameters:
+        - name: id
+          in: path
+          description: Friend id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '400':
+          description: Invalid id
+  /user/{id}/friends:
+    get:
+      tags:
+        - user
+      summary: Get user friends
+      operationId: getUserFriends
+      parameters:
+        - name: id
+          in: path
+          description: User id
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: The number of items to skip before starting to collect the result set
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: The numbers of items to return
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserFriends'          
+        '404':
+          description: User not found
+  /user/{id}/posts:
+    get:
+      tags:
+        - user
+      summary: Get user posts
+      operationId: getUserPosts
+      parameters:
+        - name: id
+          in: path
+          description: User id
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: The number of items to skip before starting to collect the result set
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: The numbers of items to return
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPosts'          
+        '404':
+          description: User not found
+  /user/{id}:
+    get:
+      tags:
+        - user
+      summary: Get user by id
+      operationId: getUserById
+      parameters:
+        - name: id
+          in: path
+          description: User id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+  /post:
+    post:
+      tags:
+        - post
+      summary: Publish post
+      operationId: publishPost
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Post'
+      responses:
+        '200':
+          description: Successful operation
+  /posts:
+    get:
+      tags:
+        - post
+      summary: Get current user posts
+      operationId: getCurrentUserPosts
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPosts'
+        '404':
+          description: Posts not found
+  /message:
+    post:
+      tags:
+        - message
+      summary: Send message
+      operationId: sendMessage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+      responses:
+        '200':
+          description: Successful operation
+  /messages:
+    get:
+      tags:
+        - message
+      summary: Get chat messages
+      operationId: getChatMessages
+      parameters:
+        - name: id
+          in: query
+          description: Chat id
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: The number of items to skip before starting to collect the result set
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: The numbers of items to return
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessages'
+  /chats:
+    get:
+      tags:
+        - message
+      summary: Get user chats
+      operationId: getUserChats
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: The number of items to skip before starting to collect the result set
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: The numbers of items to return
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserChats'
+        '404':
+          description: Posts not found
+components:
+  schemas:
+    UserFriends:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 100000
+        friends:
+          type: array
+          items:
+            $ref: '#/components/schemas/Friend'
+    Friend:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 123
+        name:
+          type: string
+          example: Pablo
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        name:
+          type: string
+          example: John Doe
+        about:
+          type: string
+          example: About
+        photoUrls:
+          type: array
+          items:
+            type: string
+    Post:
+      type: object
+      properties:
+        topic:
+          type: string
+          example: Topic
+        text:
+          type: string
+          example: Hello
+        image:
+          type: string
+          format: binary
+    UserPosts:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 100000
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 123123
+        userId:
+          type: integer
+          format: int64
+          example: 10
+        text:
+          type: string
+          example: Hello there!
+        attachment:
+          type: string
+          format: binary
+        timestamp:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+    ChatMessages:
+      type: object
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+    UserChats:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 123123
+        chats:
+          type: array
+          items:
+            $ref: '#/components/schemas/Chat'
+    Chat:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 123123
+        name:
+          type: string
+          example: it
+        type:
+          type: string
+          example: one to one
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
