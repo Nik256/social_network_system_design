@@ -15,6 +15,8 @@ CREATE TYPE "realtion_types" AS ENUM (
   'love'
 );
 
+-- Relational
+-- Replication: master-slave (sync, async)
 CREATE TABLE "users" (
   "id" integer PRIMARY KEY,
   "name" varchar,
@@ -58,6 +60,8 @@ CREATE TABLE "posts_comments" (
   "text" text
 );
 
+-- Key-value
+-- Replication: master-slave (sync, async)
 CREATE TABLE "messages" (
   "id" integer PRIMARY KEY,
   "sender_id" integer,
@@ -77,6 +81,8 @@ CREATE TABLE "chats_messages" (
   PRIMARY KEY ("chat_id", "message_id")
 );
 
+-- Key-value
+-- Replication: master-slave (async)
 CREATE TABLE "likes" (
   "post_id" integer PRIMARY KEY,
   "count" integer
@@ -87,6 +93,8 @@ CREATE TABLE "views" (
   "count" integer
 );
 
+-- Graph
+-- Replication: master-slave (async)
 CREATE TABLE "users_realations" (
   "user_id" integer PRIMARY KEY,
   "realated_user_id" integer,
